@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无人机团标讨论会议视频</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .video-container {
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        video {
+            width: 100%;
+            display: block;
+        }
+        .controls {
+            padding: 10px;
+            background-color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #fullscreenBtn {
+            background-color: #2196F3;
+        }
+        #fullscreenBtn:hover {
+            background-color: #0b7dda;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            width: 0%;
+        }
+        .time-display {
+            color: white;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>无人机团标讨论会议视频</h1>
+    <div class="video-container">
+        <video id="myVideo">
+            <source src="https://github.com/zhtttmacro/Siltrax/releases/download/%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%9B%A2%E6%A0%87%E8%AE%A8%E8%AE%BA%E4%BC%9A%E8%AE%AE%E8%A7%86%E9%A2%91/video.mp4" type="video/mp4">
+            您的浏览器不支持HTML5视频标签。
+        </video>
+        <div class="controls">
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="time-display">
+                <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+            </div>
+            <div class="button-group">
+                <button id="playPauseBtn">播放</button>
+                <button id="fullscreenBtn">全屏</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
+    
+        // 播放/暂停按钮点击事件
+        playPauseBtn.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.textContent = '暂停';
+            } else {
+                video.pause();
+                playPauseBtn.textContent = '播放';
+            }
+        });
+    
+        // 全屏按钮点击事件
+        fullscreenBtn.addEventListener('click', function() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+            }
+        });
+    
+        // 更新进度条
+        video.addEventListener('timeupdate', function() {
+            const progress = (video.currentTime / video.duration) * 100;
+            progressBar.style.width = progress + '%';
+            
+            // 更新时间显示
+            currentTimeDisplay.textContent = formatTime(video.currentTime);
+        });
+    
+        // 点击进度条跳转到相应时间点
+        progressContainer.addEventListener('click', function(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = video.duration;
+            video.currentTime = (clickX / width) * duration;
+        });
+    
+        // 视频加载后显示总时长
+        video.addEventListener('loadedmetadata', function() {
+            durationDisplay.textContent = formatTime(video.duration);
+        });
+    
+        // 视频结束时重置按钮文本
+        video.addEventListener('ended', function() {
+            playPauseBtn.textContent = '播放';
+        });
+    
+        // 格式化时间显示 (秒 → 分:秒)
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
